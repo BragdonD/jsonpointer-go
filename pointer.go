@@ -32,9 +32,7 @@ func NewJSONPointer(jsonPointer string) (*JSONPointer, error) {
 
 func parseJSONPointerString(jsonPointer string) ([]string, error) {
 	if jsonPointer == JSONPointerEmptyPointer {
-		return nil, fmt.Errorf(
-			"jsonpointer: the jsonpointer is empty",
-		)
+		return []string{}, nil
 	}
 	if !strings.HasPrefix(jsonPointer, JSONPointerSeparatorToken) {
 		return nil, fmt.Errorf(

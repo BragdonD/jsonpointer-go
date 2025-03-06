@@ -1,6 +1,7 @@
 package jsonpointergo
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -10,7 +11,7 @@ func TestNewJSONPointer(t *testing.T) {
 		wantErr     bool
 	}{
 		{"/foo/bar", false},
-		{"", true},
+		{"", false},
 		{"foo/bar", true},
 	}
 
@@ -39,6 +40,7 @@ func TestGetValue(t *testing.T) {
 		{"/array/0", 1, false},
 		{"/array/3", nil, true},
 		{"/nonexistent", nil, true},
+		{"", document, false},
 	}
 
 	for _, test := range tests {
@@ -51,7 +53,7 @@ func TestGetValue(t *testing.T) {
 			t.Errorf("JSONPointer.GetValue() error = %v, wantErr %v", err, test.wantErr)
 			continue
 		}
-		if got != test.want {
+		if !reflect.DeepEqual(got, test.want) {
 			t.Errorf("JSONPointer.GetValue() = %v, want %v", got, test.want)
 		}
 	}
