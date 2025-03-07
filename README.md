@@ -1,6 +1,8 @@
 #  jsonpointer-go
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://github.com/BragdonD/jsonpointer-go/actions/workflows/go.yaml/badge.svg)](https://github.com/BragdonD/jsonpointer-go/actions?query=workflow%3A"Go")
+[![codecov](https://codecov.io/gh/BragdonD/jsonpointer-go/branch/main/graph/badge.svg)](https://codecov.io/gh/BragdonD/jsonpointer-go)
 
 An implementation of RFC 6901 - JavaScript Object Notation (JSON) Pointer in Golang.
 
