@@ -43,10 +43,10 @@ func main() {
         "qux": {"corge": "grault"}
     }`
 
-	var jsonData map[string]any
-	if err := json.Unmarshal([]byte(jsonStr), &jsonData); err != nil {
-		panic(fmt.Sprintf("failed to unmarshal json string: %v", err))
-	}
+    var jsonData map[string]any
+    if err := json.Unmarshal([]byte(jsonStr), &jsonData); err != nil {
+        panic(fmt.Sprintf("failed to unmarshal json string: %v", err))
+    }
 
     pointer, err := jsonpointer.Parse("/foo/0")
     if err != nil {
