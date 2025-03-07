@@ -18,7 +18,12 @@ func TestNewJSONPointer(t *testing.T) {
 	for _, test := range tests {
 		_, err := NewJSONPointer(test.jsonPointer)
 		if (err != nil) != test.wantErr {
-			t.Errorf("NewJSONPointer(%v) error = %v, wantErr %v", test.jsonPointer, err, test.wantErr)
+			t.Errorf(
+				"NewJSONPointer(%v) error = %v, wantErr %v",
+				test.jsonPointer,
+				err,
+				test.wantErr,
+			)
 		}
 	}
 }
@@ -46,15 +51,27 @@ func TestGetValue(t *testing.T) {
 	for _, test := range tests {
 		jp, err := NewJSONPointer(test.jsonPointer)
 		if err != nil {
-			t.Fatalf("NewJSONPointer(%v) error = %v", test.jsonPointer, err)
+			t.Fatalf(
+				"NewJSONPointer(%v) error = %v",
+				test.jsonPointer,
+				err,
+			)
 		}
 		got, err := jp.GetValue(document)
 		if (err != nil) != test.wantErr {
-			t.Errorf("JSONPointer.GetValue() error = %v, wantErr %v", err, test.wantErr)
+			t.Errorf(
+				"JSONPointer.GetValue() error = %v, wantErr %v",
+				err,
+				test.wantErr,
+			)
 			continue
 		}
 		if !reflect.DeepEqual(got, test.want) {
-			t.Errorf("JSONPointer.GetValue() = %v, want %v", got, test.want)
+			t.Errorf(
+				"JSONPointer.GetValue() = %v, want %v",
+				got,
+				test.want,
+			)
 		}
 	}
 }
@@ -71,7 +88,12 @@ func TestDecodeJSONPointerReference(t *testing.T) {
 
 	for _, test := range tests {
 		if got := decodeJSONPointerReference(test.ref); got != test.want {
-			t.Errorf("decodeJSONPointerReference(%v) = %v, want %v", test.ref, got, test.want)
+			t.Errorf(
+				"decodeJSONPointerReference(%v) = %v, want %v",
+				test.ref,
+				got,
+				test.want,
+			)
 		}
 	}
 }
