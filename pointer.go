@@ -65,25 +65,19 @@ func (jp *JSONPointer) GetValue(document JSONObject) (any, error) {
 	var subDocument any
 	// Start with the root of the JSON document
 	subDocument = document
-	for i, tokenRefEncoded := range jp.referenceTokens {
+	for _, tokenRefEncoded := range jp.referenceTokens {
 		tokenRef := decodeJSONPointerReference(tokenRefEncoded)
-		// Handle the case where the value is a JSON object
-		jsonDoc, ok := subDocument.(JSONObject)
-		if ok {
-			value, ok := jsonDoc[tokenRef]
+		switch current := subDocument.(type) {
+		case JSONObject:
+			value, ok := current[tokenRef]
 			if !ok {
 				return nil, fmt.Errorf(
-					"jsonpointer: the document provided does not have the following reference: %v, %v",
+					"jsonpointer: the document provided does not have the following reference: %v",
 					tokenRef,
-					i,
 				)
 			}
 			subDocument = value
-			continue
-		}
-		// Handle the case where the value is an Array
-		jsonArray, ok := subDocument.([]any)
-		if ok {
+		case []any:
 			index, err := strconv.Atoi(tokenRef)
 			if err != nil {
 				return nil, fmt.Errorf(
@@ -91,22 +85,20 @@ func (jp *JSONPointer) GetValue(document JSONObject) (any, error) {
 					tokenRef,
 				)
 			}
-			if index < 0 || index >= len(jsonArray) {
+			if index < 0 || index >= len(current) {
 				return nil, fmt.Errorf(
-					"jsonpointer: the index provided [%v] is trying to access an out of bond item on an array of length %v",
+					"jsonpointer: the index provided [%v] is trying to access an out of bound item on an array of length %v",
 					index,
-					len(jsonArray),
+					len(current),
 				)
 			}
-			subDocument = jsonArray[index]
-			continue
+			subDocument = current[index]
+		default:
+			return nil, fmt.Errorf(
+				"jsonpointer: the reference is trying to access a single value: %v. Type of subdocument: %T",
+				tokenRef, subDocument,
+			)
 		}
-		// Handle the case where the value is a single value
-		return nil, fmt.Errorf(
-			"jsonpointer: the reference is trying to access a single value: %v. Type of subdocument: %T",
-			tokenRef,
-			subDocument,
-		)
 	}
 	return subDocument, nil
 }
