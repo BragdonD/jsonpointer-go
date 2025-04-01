@@ -76,6 +76,57 @@ func TestGetValue(t *testing.T) {
 	}
 }
 
+func TestSetValue(t *testing.T) {
+	document := map[string]any{
+		"foo": map[string]any{
+			"bar": "baz",
+		},
+	}
+
+	tests := []struct {
+		jsonPointer string
+		value       any
+		want        map[string]any
+		wantErr     bool
+	}{
+		// {
+		// 	"/foo/bar", "newValue",
+		// 	map[string]any{
+		// 		"foo": map[string]any{
+		// 			"bar": "newValue",
+		// 		},
+		// 	}, false},
+		{"/array/0", 1, nil, true},
+	}
+
+	for _, test := range tests {
+		jp, err := NewJSONPointer(test.jsonPointer)
+		if err != nil {
+			t.Fatalf(
+				"NewJSONPointer(%v) error = %v",
+				test.jsonPointer,
+				err,
+			)
+		}
+		err = jp.SetValue(document, test.value)
+		if (err != nil) != test.wantErr {
+			t.Errorf(
+				"JSONPointer.SetValue() error = %v, wantErr %v",
+				err,
+				test.wantErr,
+			)
+			continue
+		}
+		if !reflect.DeepEqual(document, test.want) {
+			t.Errorf(
+				"JSONPointer.SetValue() = %v, want %v",
+				document,
+				test.want,
+			)
+		}
+	}
+}
+
 func TestDecodeJSONPointerReference(t *testing.T) {
 	tests := []struct {
 		ref  string

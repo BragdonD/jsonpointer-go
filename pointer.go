@@ -103,6 +103,61 @@ func (jp *JSONPointer) GetValue(document JSONObject) (any, error) {
 	return subDocument, nil
 }
 
+// SetValue sets the value in the JSON document based on the JSON
+// Pointer
+func (jp *JSONPointer) SetValue(document JSONObject, value any) error {
+	if document == nil {
+		return fmt.Errorf(
+			"jsonpointer: the JSON document provided is nil",
+		)
+	}
+	if len(jp.referenceTokens) == 0 {
+		document[JSONPointerEmptyPointer] = value
+		return nil
+	}
+	var subDocument any
+	subDocument = document
+	for _, tokenRefEncoded := range jp.referenceTokens {
+		tokenRef := decodeJSONPointerReference(tokenRefEncoded)
+		switch current := subDocument.(type) {
+		case JSONObject:
+			fmt.Printf("current: %v\n", current)
+			value, ok := current[tokenRef]
+			if !ok {
+				return fmt.Errorf(
+					"jsonpointer: the document provided does not have the following reference: %v",
+					tokenRef,
+				)
+			}
+			subDocument = value
+		case []any:
+			fmt.Printf("current 1: %v\n", current)
+			index, err := strconv.Atoi(tokenRef)
+			if err != nil {
+				return fmt.Errorf(
+					"jsonpointer: the reference is trying to access a field on an array: %v",
+					tokenRef,
+				)
+			}
+			if index < 0 || index >= len(current) {
+				return fmt.Errorf(
+					"jsonpointer: the index provided [%v] is trying to access an out of bound item on an array of length %v",
+					index,
+					len(current),
+				)
+			}
+			subDocument = current[index]
+		default:
+			fmt.Printf("current 2: %v\n", current)
+			return fmt.Errorf(
+				"jsonpointer: the reference is trying to access a single value: %v. Type of subdocument: %T",
+				tokenRef, subDocument,
+			)
+		}
+	}
+	return nil
+}
+
 // decodeJSONPointerReference decodes a reference token by replacing
 // escape sequences
 func decodeJSONPointerReference(ref string) string {
